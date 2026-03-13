@@ -2,6 +2,8 @@
 #include "orderbook.hpp"
 #include "matching_engine.hpp"
 #include "market_data.hpp"
+#include "random_bot.hpp"
+#include "../agents/random_bot.hpp"
 
 int main() {
 
@@ -10,6 +12,10 @@ int main() {
 
     LimitOrderBook lob;
 
+    RandomBot bot1("BotA");
+    RandomBot bot2("BotB");
+    RandomBot bot3("BotC");
+
     int timestep = 0;
 
     while(data.hasNext()) {
@@ -17,37 +23,18 @@ int main() {
         auto tick = data.next();
         timestep++;
 
-        std::cout << "\n===== Timestep " << timestep << " =====\n";
-        std::cout << "Market Price: " << tick.price << "\n";
+        std::cout << "\n=== Timestep " << timestep << " ===\n";
+        std::cout << "Price: " << tick.price << "\n";
 
-        // ----- Bots will go here later -----
+        // Bots react to price
+        bot1.onPriceUpdate(tick.price, lob, timestep);
+        bot2.onPriceUpdate(tick.price, lob, timestep);
+        bot3.onPriceUpdate(tick.price, lob, timestep);
 
-        // Example dummy orders for now
-        if(timestep % 5 == 0) {
-            lob.addOrder({timestep, "RandomBot", tick.price - 10, 1}, true); // buy
-        }
-
-        if(timestep % 7 == 0) {
-            lob.addOrder({timestep+1000, "RandomBot", tick.price + 10, 1}, false); // sell
-        }
-
-        // ----- Matching Engine -----
+        // Match orders
         matchOrders(lob);
 
-        // Print small orderbook snapshot
-        std::cout << "Top Bid: ";
-        if(!lob.bids.empty())
-            std::cout << lob.bids.begin()->first << "\n";
-        else
-            std::cout << "None\n";
-
-        std::cout << "Top Ask: ";
-        if(!lob.asks.empty())
-            std::cout << lob.asks.begin()->first << "\n";
-        else
-            std::cout << "None\n";
-
-        if(timestep > 100) break; // stop early for testing
+        if(timestep > 100) break;
     }
 
     return 0;

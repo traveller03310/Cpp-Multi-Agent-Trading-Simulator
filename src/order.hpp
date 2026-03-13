@@ -8,7 +8,7 @@ enum class Side {
 
 struct Order {
     int id;
-    Side side;
+    std::string agent;
     double price;
     int quantity;
 };

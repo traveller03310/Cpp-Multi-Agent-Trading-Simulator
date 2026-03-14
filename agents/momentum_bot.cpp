@@ -7,27 +7,22 @@ MomentumBot::MomentumBot(std::string name, int window) {
 
 void MomentumBot::onPriceUpdate(double price) {
     prices.push_back(price);
-
-    if (prices.size() > window)
+    if (prices.size() > (size_t)window)
         prices.erase(prices.begin());
 }
 
 bool MomentumBot::shouldBuy() {
-    if (prices.size() < window) return false;
-
+    if (prices.size() < (size_t)window) return false;
     return prices.back() > prices.front();
 }
 
 bool MomentumBot::shouldSell() {
-    if (prices.size() < window) return false;
-
+    if (prices.size() < (size_t)window) return false;
     return prices.back() < prices.front();
 }
 
 Order MomentumBot::createOrder(int id) {
-
     double price = prices.back();
     int quantity = 1;
-
     return {id, name, price, quantity};
 }

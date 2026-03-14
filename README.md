@@ -4,13 +4,13 @@ A high-performance, event-driven trading simulator written in C++ that models mu
 
 ---
 
-## 🧠 Overview
+##  Overview
 
 This project simulates a realistic financial exchange where multiple bots place buy/sell orders based on different strategies. Orders are matched through a **Limit Order Book (LOB)** engine using real **ETH/USDT** 1-minute candlestick data from Binance.
 
 ---
 
-## ✨ Features
+##  Features
 
 - ⚙️ **Limit Order Book** — price-time priority matching engine
 - 🤖 **Multi-Agent System** — multiple bots trading simultaneously
@@ -21,7 +21,7 @@ This project simulates a realistic financial exchange where multiple bots place 
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 crypto-trading-simulator/
@@ -46,7 +46,7 @@ crypto-trading-simulator/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -90,7 +90,7 @@ make clean  # Remove compiled binary
 
 ---
 
-## 📦 Getting Market Data
+##  Getting Market Data
 
 This simulator uses Binance 1-minute OHLCV candlestick data.
 
@@ -102,7 +102,7 @@ This simulator uses Binance 1-minute OHLCV candlestick data.
 
 ---
 
-## 📤 Sample Output
+##  Sample Output
 
 ```
 === Timestep 1 ===
@@ -118,7 +118,7 @@ Trade executed: 1 ETH at 2451.96 between BotA and BotB
 
 ---
 
-## 🤖 Trading Agents
+##  Trading Agents
 
 ### RandomBot
 Places randomized limit orders slightly above or below the current market price. Simulates noise traders in the market.
@@ -128,7 +128,7 @@ Tracks a rolling window of recent prices. Buys when price is trending up, sells 
 
 ---
 
-## 🛣️ Roadmap
+##  Roadmap
 
 - [ ] PnL tracking per agent
 - [ ] More strategy bots (Mean Reversion, VWAP)
@@ -138,7 +138,7 @@ Tracks a rolling window of recent prices. Buys when price is trending up, sells 
 
 ---
 
-## 🛠️ Built With
+##  Built With
 
 - **C++17**
 - **STL** — `std::map`, `std::queue` for order book
@@ -146,13 +146,13 @@ Tracks a rolling window of recent prices. Buys when price is trending up, sells 
 
 ---
 
-## 📄 License
+##  License
 
 This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-## 🙌 Acknowledgements
+##  Acknowledgements
 
 - [Binance Public Data](https://data.binance.vision) for free historical market data
 - Inspired by real-world limit order book implementations used in HFT systems

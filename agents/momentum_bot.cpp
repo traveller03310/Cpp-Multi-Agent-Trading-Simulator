@@ -1,23 +1,21 @@
 #include "momentum_bot.hpp"
 
-MomentumBot::MomentumBot(std::string name, int window) {
-    this->name = name;
-    this->window = window;
-}
+MomentumBot::MomentumBot(std::string name, int window)
+    : Bot(name), window(window) {}
 
-void MomentumBot::onPriceUpdate(double price) {
+void MomentumBot::onPriceUpdate(double price, LimitOrderBook& lob, int timestep) {
     prices.push_back(price);
-    if (prices.size() > (size_t)window)
-        prices.erase(prices.begin());
+    if ((int)prices.size() > window)
+        prices.pop_front();
 }
 
 bool MomentumBot::shouldBuy() {
-    if (prices.size() < (size_t)window) return false;
+    if ((int)prices.size() < window) return false;
     return prices.back() > prices.front();
 }
 
 bool MomentumBot::shouldSell() {
-    if (prices.size() < (size_t)window) return false;
+    if ((int)prices.size() < window) return false;
     return prices.back() < prices.front();
 }
 

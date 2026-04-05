@@ -6,6 +6,7 @@
 #include "matching_engine.hpp"
 #include "market_data.hpp"
 #include "../agents/random_bot.hpp"
+#include "../agents/momentum_bot.hpp"
 
 int main() {
     // Fix #2: decouple cout from stdio for faster console output
@@ -22,6 +23,9 @@ int main() {
     bots.push_back(std::make_unique<RandomBot>("BotA"));
     bots.push_back(std::make_unique<RandomBot>("BotB"));
     bots.push_back(std::make_unique<RandomBot>("BotC"));
+
+    bots.push_back(std::make_unique<MomentumBot>("MomBot1", 5));
+    bots.push_back(std::make_unique<MomentumBot>("MomBot2", 10));
 
     // Fix #3: use string buffers, write to file once at the end
     std::string tradeBuffer = "timestep,buyer,seller,price,quantity\n";

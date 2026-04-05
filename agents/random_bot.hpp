@@ -5,20 +5,13 @@
 
 class RandomBot : public Bot {
 public:
-
     RandomBot(std::string n) : Bot(n) {}
 
-    void onPriceUpdate(double price, LimitOrderBook& lob, int timestep) override {
-
+    void onPriceUpdate(double price, LimitOrderBook& lob, int) override {
         int r = rand() % 10;
-
-        if(r < 3) {
-            // buy
-            lob.addOrder({timestep, name, price - 5, 1}, true);
-        }
-        else if(r > 7) {
-            // sell
-            lob.addOrder({timestep + 10000, name, price + 5, 1}, false);
-        }
+        if (r < 3)
+            lob.addOrder(Order::makeLimitOrder(name, price - 5, 1, Side::BUY));
+        else if (r > 7)
+            lob.addOrder(Order::makeLimitOrder(name, price + 5, 1, Side::SELL));
     }
 };

@@ -1,20 +1,23 @@
 #include <iostream>
-#include <fstream>
+#include <fstream>  // Used for file input/output operations
 #include <vector>
-#include <memory>
+#include <memory>  // Used for smart pointers (auto ptr) — automatic memory management
+
+// Project headers
 #include "orderbook.hpp"
 #include "matching_engine.hpp"
 #include "market_data.hpp"
+
+// Agents
 #include "../agents/random_bot.hpp"
 #include "../agents/momentum_bot.hpp"
 
 int main() {
-    // Fix #2: decouple cout from stdio for faster console output
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
     MarketData data;
-    data.loadCSV("data/eth_1m.csv");
+    data.loadCSV("data/eth_1m.csv");  // data loaded
 
     LimitOrderBook lob;
 

@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Isrc -Iagents
+CXX      = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -Isrc -Iagents
 
 SRCS = src/main.cpp src/market_data.cpp src/matching_engine.cpp agents/momentum_bot.cpp
 TARGET = trading_sim

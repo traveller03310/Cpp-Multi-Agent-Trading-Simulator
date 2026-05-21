@@ -5,8 +5,9 @@
 class Bot {
 public:
     std::string name;
-    double cash     = 0.0;
-    int    position = 0;
+    double cash        = 100000.0;
+    int    position    = 0;
+    double realizedPnl = 0.0;
 
     Bot(std::string n) : name(n) {}
 
@@ -14,15 +15,19 @@ public:
 
     void recordTrade(double price, int qty, bool buyer) {
         if (buyer) {
-            cash     -= price * qty;
-            position += qty;
+            cash        -= price * qty;
+            position    += qty;
         } else {
-            cash     += price * qty;
-            position -= qty;
+            realizedPnl += (price - avgCostBasis) * qty;  // lock in profit/loss
+            cash        += price * qty;
+            position    -= qty;
         }
     }
 
     double pnl(double currentPrice) const {
-        return cash + position * currentPrice;
+        return realizedPnl + (cash - 100000.0) + position * currentPrice;
     }
+
+private:
+    double avgCostBasis = 0.0;  // tracks average buy price for realized P&L calc
 };

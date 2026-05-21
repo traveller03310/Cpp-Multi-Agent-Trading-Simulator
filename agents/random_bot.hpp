@@ -2,16 +2,21 @@
 #include "bot.hpp"
 #include <random>
 #include "../src/orderbook.hpp"
+#include "../src/flat_orderbook.hpp"
 
 class RandomBot : public Bot {
     std::mt19937 rng;
     std::uniform_int_distribution<int> dist{0, 9};
 
 public:
-    RandomBot(std::string n)
-        : Bot(n), rng(std::random_device{}()) {}
+    RandomBot(std::string n) : Bot(n), rng(std::random_device{}()) {}
 
-    void onPriceUpdate(double price, LimitOrderBook& lob, int) override {
+    void onPriceUpdate(double price, LimitOrderBook& lob, int) override { placeOrders(price, lob); }
+    void onPriceUpdate(double price, FlatOrderBook&  lob, int) override { placeOrders(price, lob); }
+
+private:
+    template<typename Book>
+    void placeOrders(double price, Book& lob) {
         int r = dist(rng);
         if (r < 3)
             lob.addOrder(Order::makeLimitOrder(name, price - 5, 1, Side::BUY));

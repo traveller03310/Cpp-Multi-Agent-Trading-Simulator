@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
-#include "../src/orderbook.hpp"
+
+class LimitOrderBook;
+class FlatOrderBook;
 
 class Bot {
 public:
@@ -11,14 +13,17 @@ public:
 
     Bot(std::string n) : name(n) {}
 
-    virtual void onPriceUpdate(double price, LimitOrderBook& lob, int timestep) = 0;
+    virtual void onPriceUpdate(double price, LimitOrderBook& lob, int timestep);
+    virtual void onPriceUpdate(double price, FlatOrderBook&  lob, int timestep);
+
+    virtual ~Bot() = default;
 
     void recordTrade(double price, int qty, bool buyer) {
         if (buyer) {
-            cash        -= price * qty;
-            position    += qty;
+            cash     -= price * qty;
+            position += qty;
         } else {
-            realizedPnl += (price - avgCostBasis) * qty;  // lock in profit/loss
+            realizedPnl += (price - avgCostBasis) * qty;
             cash        += price * qty;
             position    -= qty;
         }
@@ -29,5 +34,5 @@ public:
     }
 
 private:
-    double avgCostBasis = 0.0;  // tracks average buy price for realized P&L calc
+    double avgCostBasis = 0.0;
 };

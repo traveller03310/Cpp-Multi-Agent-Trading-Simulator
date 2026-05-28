@@ -1,208 +1,219 @@
-#  C++ Multi-Agent Trading Simulator
+# C++ Multi-Agent Trading Simulator
 
-A high-performance, event-driven trading simulator written in C++ that models multiple autonomous trading agents competing in a real-time limit order book using historical cryptocurrency market data. Includes a Python-powered performance analytics dashboard.
-
----
-
-##  Overview
-
-This project simulates a realistic financial exchange where multiple bots place buy/sell orders based on different strategies. Orders are matched through a **Limit Order Book (LOB)** engine using real **ETH/USDT** 1-minute candlestick data from Binance. After each simulation run, a Python script generates a full performance dashboard with key trading metrics.
+A high-performance, event-driven trading simulator written in modern C++17. Multiple autonomous bots compete in a real limit order book using historical ETH/USDT and synthetic BTC/USDT market data. Built as a deep dive into systems programming concepts relevant to HFT and trading infrastructure.
 
 ---
 
-##  Features
+## What This Project Demonstrates
 
--  **Limit Order Book** — price-time priority matching engine
--  **Multi-Agent System** — multiple bots trading simultaneously
--  **Real Market Data** — plugs into Binance historical CSV data
--  **Random Bot** — places randomized buy/sell orders around market price
--  **Momentum Bot** — trend-following strategy using a rolling price window
--  **Event-driven loop** — tick-by-tick simulation over historical data
--  **Trade Logging** — all executed trades saved to CSV automatically
--  **Performance Dashboard** — Python visualization with 6 key metrics charts
+| Concept | Where |
+|---|---|
+| Lock-free order ID generation | `std::atomic<int>` in `order.hpp` |
+| Dangling pointer elimination | `std::list` stable nodes in `orderbook.hpp` |
+| Cache-friendly order book | `FlatOrderBook` — sorted `std::vector` + binary search |
+| Modern PRNG (no `rand()`) | `std::mt19937` + `std::uniform_int_distribution` in `random_bot.hpp` |
+| RAII memory management | `std::unique_ptr<Bot>` throughout |
+| Mark-to-market P&L | Per-bot cash, position, realizedPnl tracked live in C++ |
+| chrono benchmarking | ns-precision timing on every run |
+| Multi-instrument simulation | Independent order books per instrument |
+| RSI strategy | Full 14-period RSI with 30/70 thresholds |
+| Momentum strategy | Half-window average comparison (fixed signal) |
 
 ---
 
-##  Project Structure
+## Architecture
 
 ```
 crypto-trading-simulator/
 ├── src/
-│   ├── main.cpp              # Entry point, simulation loop
-│   ├── order.hpp             # Order struct definition
-│   ├── orderbook.hpp         # Limit Order Book class
-│   ├── matching_engine.hpp   # Matching engine interface
-│   ├── matching_engine.cpp   # Order matching logic + trade logging
-│   ├── market_data.hpp       # Market data loader interface
-│   └── market_data.cpp       # CSV parser for tick data
+│   ├── main.cpp                  # Simulation loop, benchmarks, P&L summary
+│   ├── order.hpp                 # Order struct — atomic ID, Side enum, market/limit factory
+│   ├── orderbook.hpp             # LimitOrderBook — std::map + std::list (stable pointers)
+│   ├── orderbook_base.hpp        # Shared base for LOB types
+│   ├── flat_orderbook.hpp        # FlatOrderBook — std::vector + binary search (cache-friendly)
+│   ├── matching_engine.hpp/cpp   # Matches orders, executes trades, updates bot P&L
+│   ├── flat_matching_engine.hpp/cpp  # Same for FlatOrderBook
+│   ├── market_data.hpp/cpp       # Binance CSV parser
+│   └── orderbook.cpp
 ├── agents/
-│   ├── bot.hpp               # Abstract base Bot class
-│   ├── random_bot.hpp        # Random trading agent
-│   ├── momentum_bot.hpp      # Momentum-based trading agent
-│   └── momentum_bot.cpp      # Momentum bot implementation
+│   ├── bot.hpp/cpp               # Base class — cash, position, realizedPnl, recordTrade()
+│   ├── random_bot.hpp            # Noise trader — mt19937, uniform distribution
+│   ├── momentum_bot.hpp/cpp      # Trend follower — half-window avg comparison
+│   └── rsi_bot.hpp               # Mean reversion — 14-period RSI, buy <30 sell >70
 ├── data/
-│   ├── eth_1m.csv            # Historical ETH/USDT 1m candle data (Binance)
-│   ├── trade_log.csv         # Generated — executed trades per run
-│   └── price_log.csv         # Generated — price at each timestep
-├── visualize.py              # Python performance analytics dashboard
+│   ├── eth_1m.csv                # Binance ETH/USDT 1m candles
+│   ├── btc_1m.csv                # Synthetic BTC/USDT (same format)
+│   ├── trade_log_ETH.csv         # Generated — all ETH trades
+│   ├── trade_log_BTC.csv         # Generated — all BTC trades
+│   ├── price_log_ETH.csv         # Generated — ETH price per tick
+│   └── price_log_BTC.csv         # Generated — BTC price per tick
+├── visualize.py                  # Performance dashboard (Python)
 ├── Makefile
 └── README.md
 ```
 
 ---
 
-##  Getting Started
+## Trading Agents
+
+### RandomBot
+Noise trader. Places limit orders ±$5 from market price with 30% buy / 30% sell / 40% hold probability. Uses `std::mt19937` seeded from `std::random_device` — no `rand()`.
+
+### MomentumBot
+Trend follower. Maintains a rolling price window (configurable, default 5 ticks). Compares the average of the recent half vs the earlier half — buys on uptrend, sells on downtrend. More robust than naive back-vs-front comparison.
+
+### RSIBot
+Mean reversion. Computes 14-period RSI using standard avgGain/avgLoss formula. Buys when RSI < 30 (oversold), sells when RSI > 70 (overbought). Entirely stateless between instruments.
+
+---
+
+## P&L Tracking
+
+Every bot tracks three values in real time, updated by the matching engine after each fill:
+
+| Field | Meaning |
+|---|---|
+| `cash` | Net cash flow from all trades (starts at $100,000) |
+| `position` | Net units held (positive = long, negative = short) |
+| `realizedPnl` | Locked-in profit/loss from closed positions |
+
+Mark-to-market P&L = `realizedPnl + (cash - 100000) + position * currentPrice`
+
+---
+
+## Key Engineering Decisions
+
+### 1. `std::list` instead of `std::queue` for order storage
+`std::queue` is backed by `std::deque`, which can reallocate and **invalidate every raw pointer** stored in `orderIndex`. `std::list` nodes never move in memory after insertion — `orderIndex` pointers stay valid forever. This eliminates a class of dangling pointer bugs under load.
+
+### 2. `FlatOrderBook` — contiguous memory layout
+`std::map` is a red-black tree — every insert/lookup chases heap-allocated pointers across memory, thrashing the cache. `FlatOrderBook` stores price levels in a sorted `std::vector`. All levels sit in contiguous memory; the CPU prefetcher works effectively. Binary search gives the same O(log n) complexity but with far lower constants at realistic price-level counts.
+
+### 3. `mt19937` replacing `rand()`
+`rand()` has implementation-defined behaviour, modulo bias with `% N`, and shared global state between threads. `std::mt19937` with `std::uniform_int_distribution` gives uniform distribution, a 2^19937-1 period, and per-instance state safe for multithreaded use.
+
+### 4. Atomic order IDs
+`static std::atomic<int> nextId` in `Order` gives lock-free unique IDs across all threads. Uses `memory_order_relaxed` — we only need atomicity, not ordering relative to other variables.
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
-**C++ compiler:**
-
-Mac:
+**C++17 compiler:**
 ```bash
+# Mac
 xcode-select --install
-```
 
-Linux/Ubuntu:
-```bash
+# Ubuntu/Debian
 sudo apt install g++ make
 ```
 
-Windows — install [MSYS2](https://www.msys2.org/) then:
+**Python (for visualization):**
 ```bash
-pacman -S mingw-w64-x86_64-gcc make
+pip3 install pandas matplotlib
 ```
-
-**Python dependencies:**
-```bash
-pip3 install pandas numpy matplotlib
-```
-
----
 
 ### Build & Run
 
 ```bash
-# Clone the repo
-git clone https://github.com/traveller03310/Cpp-Multi-Agent-Trading-Simulator.git
+git clone https://github.com/stevie-x/Cpp-Multi-Agent-Trading-Simulator.git
 cd Cpp-Multi-Agent-Trading-Simulator
 
-# Build and run simulator
+# Generate synthetic BTC data
+python3 << 'EOF'
+import random
+random.seed(42)
+price = 65000.0
+ts = 1769904000000000
+with open("data/btc_1m.csv", "w") as f:
+    for i in range(1500):
+        change = random.gauss(0, 150) + (65000 - price) * 0.005
+        price = max(60000, min(70000, price + change))
+        high = price + abs(random.gauss(0, 80))
+        low = price - abs(random.gauss(0, 80))
+        vol = random.uniform(10, 80)
+        f.write(f"{ts},{price:.2f},{high:.2f},{low:.2f},{price:.2f},{vol:.5f},{ts+59999999},0,0,0,0,0\n")
+        ts += 60000000
+EOF
+
+# Build and run
 make run
 ```
 
-### Other commands
-
-```bash
-make        # Build only
-make clean  # Remove compiled binary
-```
-
----
-
-##  Getting Market Data
-
-This simulator uses Binance 1-minute OHLCV candlestick data.
-
-1. Go to [https://data.binance.vision](https://data.binance.vision)
-2. Navigate to `data → spot → monthly → klines → ETHUSDT → 1m`
-3. Download any `.zip` file
-4. Unzip and rename the CSV to `eth_1m.csv`
-5. Place it in the `data/` folder
-
----
-
-##  Performance Visualization
-
-After running the simulator, a trade log and price log are automatically saved to the `data/` folder. Run the Python dashboard to analyze results:
-
+### Visualization
 ```bash
 python3 visualize.py
 ```
 
-### Dashboard Includes
+---
 
-| Chart | Description |
+## Sample Output
+
+```
+=== Multi-Instrument Trading Simulator ===
+Running ETH and BTC in parallel order books...
+
+╔══════════════════════════════════════════════════════╗
+║          P&L SUMMARY — ETH                          ║
+╠══════════════════════════════════════════════════════╣
+║ Last price: $  2408.43                               ║
+╠══════════════════════════════════════════════════════╣
+║  Bot          Cash($)      Pos    RealizedPnL($)    ║
+╠══════════════════════════════════════════════════════╣
+║  BotA          -33484.06    55       143770.70    ║
+║  BotB          102877.49    -1       190042.63    ║
+║  MomBot1       199042.42   -41       531065.42    ║
+║  MomBot2       232627.21   -55       569822.29    ║
+║  RSIBot1       105486.35    -2        95187.01    ║
+╚══════════════════════════════════════════════════════╝
+  Sim time : 4699 µs  |  106406 ticks/sec
+```
+
+---
+
+## Benchmarks
+
+Measured on MacBook Air M2, 500 ticks, 6 bots, 2 instruments:
+
+| Metric | Value |
 |---|---|
-| **ETH Price** | Market price across all timesteps |
-| **Cumulative PnL** | Running profit/loss per bot over time |
-| **Final PnL** | Bar chart comparing total PnL across bots |
-| **Sharpe Ratio** | Risk-adjusted return per bot |
-| **Win Rate** | Percentage of profitable trades per bot |
-| **Max Drawdown** | Worst peak-to-trough loss per bot |
-
-### Sample Metrics Output
-
-```
-===== PERFORMANCE METRICS =====
- Bot   Final PnL   Sharpe Ratio   Max Drawdown   Win Rate (%)   Total Trades
-BotA     1842.50          0.412       -3210.00           54.2             38
-BotB     -923.00         -0.218       -5100.00           43.8             32
-BotC      310.75          0.101       -2840.00           50.0             30
-```
-
-### Sample Dashboard
-
-![Performance Dashboard](data/performance_dashboard.png)
+| ETH sim throughput | ~270,000 ticks/sec |
+| BTC sim throughput | ~276,000 ticks/sec |
+| Total wall time (both instruments) | ~28 ms |
+| Order ID generation | lock-free, `memory_order_relaxed` |
 
 ---
 
-##  Sample Terminal Output
+## Roadmap
 
-```
-=== Timestep 1 ===
-Price: 2447.83
-
-=== Timestep 2 ===
-Price: 2447.65
-
-=== Timestep 3 ===
-Price: 2456.96
-Trade executed: 1 ETH at 2451.96 between BotA and BotB
-
-Logs saved to data/trade_log.csv and data/price_log.csv
-```
-
----
-
-##  Trading Agents
-
-### RandomBot
-Places randomized limit orders slightly above or below the current market price. Simulates noise traders in the market.
-
-### MomentumBot
-Tracks a rolling window of recent prices. Buys when price is trending up, sells when trending down. Simulates trend-following strategies.
-
----
-
-##  Roadmap
-
-- [ ] AI/ML-powered trading agent
-- [ ] Reinforcement Learning agent
-- [ ] Multithreaded matching engine
-- [ ] More strategy bots (RSI, MACD, Bollinger Bands)
-- [ ] Risk management (position limits, stop loss)
+- [x] Limit order book with price-time priority
+- [x] Dangling pointer fix (`std::list` stable nodes)
+- [x] P&L tracking per bot (cash, position, realizedPnl)
+- [x] RSI bot (14-period, 30/70 thresholds)
+- [x] Replace `rand()` with `mt19937`
+- [x] `chrono` benchmarking (ns precision)
+- [x] Fix MomentumBot signal (half-window avg)
+- [x] `FlatOrderBook` — cache-friendly contiguous layout
+- [x] Multi-instrument skeleton (ETH + BTC independent books)
+- [ ] Multithreading — producer/consumer pipeline with `std::mutex` + `std::condition_variable`
+- [ ] Lock-free order queue (`std::atomic` + CAS)
+- [ ] False sharing elimination (cache line padding)
 - [ ] Unit tests
-- [x] Trade history logging to CSV
-- [x] Performance visualization dashboard
+- [ ] MACD / Bollinger Bands agents
+- [ ] Position limits and stop-loss
 
 ---
 
-##  Built With
+## Built With
 
-- **C++17** — core simulator and matching engine
-- **Python 3** — performance analytics and visualization
-- **pandas / numpy / matplotlib** — data processing and charting
-- **Binance Public Data API** — historical market data
-
----
-
-##  License
-
-This project is open source and available under the [MIT License](LICENSE).
+- **C++17** — core simulator
+- **Python 3 / matplotlib** — visualization
+- **Binance Public Data** — historical ETH market data
 
 ---
 
-##  Acknowledgements
+## License
 
-- [Binance Public Data](https://data.binance.vision) for free historical market data
-- Inspired by real-world limit order book implementations used in HFT systems
+MIT

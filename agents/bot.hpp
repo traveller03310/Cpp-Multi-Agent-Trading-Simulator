@@ -12,11 +12,10 @@ public:
     double realizedPnl = 0.0;
 
     Bot(std::string n) : name(n) {}
+    virtual ~Bot() = default;
 
     virtual void onPriceUpdate(double price, LimitOrderBook& lob, int timestep);
     virtual void onPriceUpdate(double price, FlatOrderBook&  lob, int timestep);
-
-    virtual ~Bot() = default;
 
     void recordTrade(double price, int qty, bool buyer) {
         if (buyer) {

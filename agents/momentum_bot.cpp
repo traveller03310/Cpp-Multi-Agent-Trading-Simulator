@@ -3,9 +3,6 @@
 MomentumBot::MomentumBot(std::string name, int window)
     : Bot(name), window(window) {}
 
-void MomentumBot::onPriceUpdate(double price, LimitOrderBook& lob, int) { placeOrders(price, lob); }
-void MomentumBot::onPriceUpdate(double price, FlatOrderBook&  lob, int) { placeOrders(price, lob); }
-
 double MomentumBot::recentAvg() const {
     int half = window / 2;
     double sum = 0.0;

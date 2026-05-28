@@ -8,6 +8,7 @@
 #include "orderbook.hpp"
 #include "matching_engine.hpp"
 #include "market_data.hpp"
+#include "threaded_sim.hpp"
 
 #include "../agents/random_bot.hpp"
 #include "../agents/momentum_bot.hpp"
@@ -26,11 +27,11 @@ static std::vector<std::unique_ptr<Bot>> makeBots() {
     return bots;
 }
 
-static void printPnL(const std::string& instrument,
+static void printPnL(const std::string& label,
                      const std::vector<std::unique_ptr<Bot>>& bots,
                      double lastPrice) {
     std::cout << "\n╔══════════════════════════════════════════════════════╗\n";
-    std::cout <<   "║          P&L SUMMARY — " << std::left << std::setw(29) << instrument << "║\n";
+    std::cout <<   "║  P&L — " << std::left << std::setw(45) << label << "║\n";
     std::cout <<   "╠══════════════════════════════════════════════════════╣\n";
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "║ Last price: $" << std::setw(10) << lastPrice
@@ -48,71 +49,98 @@ static void printPnL(const std::string& instrument,
     std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 }
 
-static void runInstrument(const std::string& name,
-                          const std::string& csvPath,
-                          int limit = 500) {
+static long long runSingleThreaded(const std::string& name,
+                                   const std::string& csvPath,
+                                   std::vector<std::unique_ptr<Bot>>& bots,
+                                   double& lastPrice,
+                                   int limit = 500) {
     MarketData data;
-    if (!data.loadCSV(csvPath)) {
-        std::cerr << "Failed to load " << csvPath << '\n';
-        return;
-    }
+    data.loadCSV(csvPath);
 
     LimitOrderBook lob;
-    auto bots = makeBots();
-
     std::string tradeBuffer = "timestep,buyer,seller,price,quantity\n";
     std::string priceBuffer = "timestep,price\n";
-    int    timestep  = 0;
-    double lastPrice = 0.0;
+    int timestep = 0;
 
-    auto simStart = Clock::now();
+    auto start = Clock::now();
 
     while (data.hasNext() && timestep < limit) {
         auto tick = data.next();
         lastPrice = tick.price;
         timestep++;
-
         priceBuffer += std::to_string(timestep) + ',' + std::to_string(tick.price) + '\n';
-
         for (auto& bot : bots)
             bot->onPriceUpdate(tick.price, lob, timestep);
-
         matchOrders(lob, bots, tradeBuffer, timestep);
     }
 
-    auto simEnd = Clock::now();
-    auto simUs  = std::chrono::duration_cast<std::chrono::microseconds>(simEnd - simStart).count();
-
-    printPnL(name, bots, lastPrice);
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(
+                  Clock::now() - start).count();
 
     std::ofstream("data/trade_log_" + name + ".csv") << tradeBuffer;
     std::ofstream("data/price_log_" + name + ".csv") << priceBuffer;
 
-    std::cout << "  Sim time : " << simUs << " µs  |  "
-              << std::fixed << std::setprecision(0)
-              << (timestep / (simUs / 1e6)) << " ticks/sec\n";
+    printPnL(name + " (single-threaded)", bots, lastPrice);
+    std::cout << "  Ticks: " << timestep
+              << "  |  Time: " << us << " µs"
+              << "  |  Throughput: " << std::fixed << std::setprecision(0)
+              << (timestep / (us / 1e6)) << " ticks/sec\n";
+    return us;
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    std::cout << "\n=== Multi-Instrument Trading Simulator ===\n";
-    std::cout << "Running ETH and BTC in parallel order books...\n";
+    constexpr int LIMIT = 500;
 
-    auto wallStart = Clock::now();
+    std::cout << "\n╔══════════════════════════════════════════════════════╗\n";
+    std::cout <<   "║     C++ Multi-Agent Trading Simulator                ║\n";
+    std::cout <<   "║     Single-threaded  vs  4-Thread Pipeline           ║\n";
+    std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 
-    // Each instrument gets its own independent order book and bot fleet.
-    // Adding a new instrument = one more runInstrument() call.
-    runInstrument("ETH", "data/eth_1m.csv");
-    runInstrument("BTC", "data/btc_1m.csv");
+    std::cout << "\n━━━ SINGLE-THREADED ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    double ethPrice = 0.0, btcPrice = 0.0;
+    long long stEth, stBtc;
+    { auto bots = makeBots(); stEth = runSingleThreaded("ETH", "data/eth_1m.csv", bots, ethPrice, LIMIT); }
+    { auto bots = makeBots(); stBtc = runSingleThreaded("BTC", "data/btc_1m.csv", bots, btcPrice, LIMIT); }
 
-    auto wallUs = std::chrono::duration_cast<std::chrono::microseconds>(
-                      Clock::now() - wallStart).count();
+    std::cout << "\n━━━ MULTITHREADED (4-thread SPSC pipeline) ━━━━━━━━━━━━\n";
+    long long mtEth, mtBtc;
+    {
+        auto bots = makeBots();
+        ThreadedSim sim("ETH", "data/eth_1m.csv", bots, LIMIT);
+        mtEth = sim.run();
+        std::cout << "\n  ETH threaded:"
+                  << "  ticks="  << sim.ticksProcessed()
+                  << "  orders=" << sim.ordersPlaced()
+                  << "  trades=" << sim.tradesExecuted()
+                  << "  time="   << mtEth << " µs\n";
+    }
+    {
+        auto bots = makeBots();
+        ThreadedSim sim("BTC", "data/btc_1m.csv", bots, LIMIT);
+        mtBtc = sim.run();
+        std::cout << "\n  BTC threaded:"
+                  << "  ticks="  << sim.ticksProcessed()
+                  << "  orders=" << sim.ordersPlaced()
+                  << "  trades=" << sim.tradesExecuted()
+                  << "  time="   << mtBtc << " µs\n";
+    }
 
-    std::cout << "\n── Total wall time: " << wallUs / 1000.0
-              << " ms ───────────────────────\n";
-    std::cout << "Logs: data/trade_log_ETH.csv, data/trade_log_BTC.csv\n";
+    std::cout << "\n╔══════════════════════════════════════════════════════╗\n";
+    std::cout <<   "║        SINGLE-THREADED vs MULTITHREADED              ║\n";
+    std::cout <<   "╠══════════════════════════════════════════════════════╣\n";
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "║  ETH  single: " << std::setw(8) << stEth << " µs"
+              << "   multi: " << std::setw(8) << mtEth << " µs      ║\n";
+    std::cout << "║  BTC  single: " << std::setw(8) << stBtc << " µs"
+              << "   multi: " << std::setw(8) << mtBtc << " µs      ║\n";
+    std::cout <<   "╠══════════════════════════════════════════════════════╣\n";
+    std::cout <<   "║  Architecture: Feed→Bots→Matcher via lock-free SPSC  ║\n";
+    std::cout <<   "║  Logger:       async Thread 4, never blocks matcher   ║\n";
+    std::cout <<   "║  False sharing: eliminated via alignas(64) padding    ║\n";
+    std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 
     return 0;
 }

@@ -4,6 +4,8 @@
 #include <memory>
 #include <iomanip>
 #include <chrono>
+#include <algorithm>
+#include <numeric>
 
 #include "orderbook.hpp"
 #include "matching_engine.hpp"
@@ -15,6 +17,7 @@
 #include "../agents/rsi_bot.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
+using ns    = std::chrono::nanoseconds;
 
 static std::vector<std::unique_ptr<Bot>> makeBots() {
     std::vector<std::unique_ptr<Bot>> bots;
@@ -49,6 +52,33 @@ static void printPnL(const std::string& label,
     std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 }
 
+static void printHistogram(const std::vector<long long>& samples_ns,
+                           const std::string& label) {
+    if (samples_ns.empty()) return;
+
+    auto sorted = samples_ns;
+    std::sort(sorted.begin(), sorted.end());
+
+    auto pct = [&](double p) -> long long {
+        size_t idx = (size_t)(p / 100.0 * sorted.size());
+        if (idx >= sorted.size()) idx = sorted.size() - 1;
+        return sorted[idx];
+    };
+
+    double avg = std::accumulate(sorted.begin(), sorted.end(), 0LL) /
+                 (double)sorted.size();
+
+    std::cout << "\n── Latency histogram: " << label << " ──────────────────────\n";
+    std::cout << "  samples : " << sorted.size() << " ticks\n";
+    std::cout << "  min     : " << sorted.front()  << " ns\n";
+    std::cout << "  avg     : " << (long long)avg  << " ns\n";
+    std::cout << "  p50     : " << pct(50)         << " ns\n";
+    std::cout << "  p99     : " << pct(99)         << " ns\n";
+    std::cout << "  p99.9   : " << pct(99.9)       << " ns\n";
+    std::cout << "  max     : " << sorted.back()   << " ns\n";
+    std::cout << "────────────────────────────────────────────────────────\n";
+}
+
 static long long runSingleThreaded(const std::string& name,
                                    const std::string& csvPath,
                                    std::vector<std::unique_ptr<Bot>>& bots,
@@ -62,20 +92,32 @@ static long long runSingleThreaded(const std::string& name,
     std::string priceBuffer = "timestep,price\n";
     int timestep = 0;
 
-    auto start = Clock::now();
+    std::vector<long long> tickLatencies;
+    tickLatencies.reserve(limit);
+
+    auto wallStart = Clock::now();
 
     while (data.hasNext() && timestep < limit) {
+        auto tickStart = Clock::now();
+
         auto tick = data.next();
         lastPrice = tick.price;
         timestep++;
-        priceBuffer += std::to_string(timestep) + ',' + std::to_string(tick.price) + '\n';
+
+        priceBuffer += std::to_string(timestep) + ',' +
+                       std::to_string(tick.price) + '\n';
+
         for (auto& bot : bots)
             bot->onPriceUpdate(tick.price, lob, timestep);
+
         matchOrders(lob, bots, tradeBuffer, timestep);
+
+        tickLatencies.push_back(
+            std::chrono::duration_cast<ns>(Clock::now() - tickStart).count());
     }
 
     auto us = std::chrono::duration_cast<std::chrono::microseconds>(
-                  Clock::now() - start).count();
+                  Clock::now() - wallStart).count();
 
     std::ofstream("data/trade_log_" + name + ".csv") << tradeBuffer;
     std::ofstream("data/price_log_" + name + ".csv") << priceBuffer;
@@ -85,6 +127,9 @@ static long long runSingleThreaded(const std::string& name,
               << "  |  Time: " << us << " µs"
               << "  |  Throughput: " << std::fixed << std::setprecision(0)
               << (timestep / (us / 1e6)) << " ticks/sec\n";
+
+    printHistogram(tickLatencies, name + " single-threaded");
+
     return us;
 }
 
@@ -96,7 +141,7 @@ int main() {
 
     std::cout << "\n╔══════════════════════════════════════════════════════╗\n";
     std::cout <<   "║     C++ Multi-Agent Trading Simulator                ║\n";
-    std::cout <<   "║     Single-threaded  vs  4-Thread Pipeline           ║\n";
+    std::cout <<   "║     Single-threaded  vs  4-Thread + Pool Pipeline    ║\n";
     std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 
     std::cout << "\n━━━ SINGLE-THREADED ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
@@ -105,41 +150,45 @@ int main() {
     { auto bots = makeBots(); stEth = runSingleThreaded("ETH", "data/eth_1m.csv", bots, ethPrice, LIMIT); }
     { auto bots = makeBots(); stBtc = runSingleThreaded("BTC", "data/btc_1m.csv", bots, btcPrice, LIMIT); }
 
-    std::cout << "\n━━━ MULTITHREADED (4-thread SPSC pipeline) ━━━━━━━━━━━━\n";
+    std::cout << "\n━━━ MULTITHREADED (4-thread pipeline + bot thread pool) ━\n";
     long long mtEth, mtBtc;
+
     {
         auto bots = makeBots();
         ThreadedSim sim("ETH", "data/eth_1m.csv", bots, LIMIT);
         mtEth = sim.run();
         std::cout << "\n  ETH threaded:"
-                  << "  ticks="  << sim.ticksProcessed()
-                  << "  orders=" << sim.ordersPlaced()
-                  << "  trades=" << sim.tradesExecuted()
-                  << "  time="   << mtEth << " µs\n";
+                  << "  ticks="        << sim.ticksProcessed()
+                  << "  orders="       << sim.ordersPlaced()
+                  << "  trades="       << sim.tradesExecuted()
+                  << "  pool_threads=" << sim.poolThreads()
+                  << "  time="         << mtEth << " µs\n";
     }
     {
         auto bots = makeBots();
         ThreadedSim sim("BTC", "data/btc_1m.csv", bots, LIMIT);
         mtBtc = sim.run();
         std::cout << "\n  BTC threaded:"
-                  << "  ticks="  << sim.ticksProcessed()
-                  << "  orders=" << sim.ordersPlaced()
-                  << "  trades=" << sim.tradesExecuted()
-                  << "  time="   << mtBtc << " µs\n";
+                  << "  ticks="        << sim.ticksProcessed()
+                  << "  orders="       << sim.ordersPlaced()
+                  << "  trades="       << sim.tradesExecuted()
+                  << "  pool_threads=" << sim.poolThreads()
+                  << "  time="         << mtBtc << " µs\n";
     }
 
     std::cout << "\n╔══════════════════════════════════════════════════════╗\n";
     std::cout <<   "║        SINGLE-THREADED vs MULTITHREADED              ║\n";
     std::cout <<   "╠══════════════════════════════════════════════════════╣\n";
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << "║  ETH  single: " << std::setw(8) << stEth << " µs"
-              << "   multi: " << std::setw(8) << mtEth << " µs      ║\n";
-    std::cout << "║  BTC  single: " << std::setw(8) << stBtc << " µs"
-              << "   multi: " << std::setw(8) << mtBtc << " µs      ║\n";
+    std::cout << "║  ETH  single: " << std::setw(8) << stEth
+              << " µs   multi: "    << std::setw(8) << mtEth << " µs      ║\n";
+    std::cout << "║  BTC  single: " << std::setw(8) << stBtc
+              << " µs   multi: "    << std::setw(8) << mtBtc << " µs      ║\n";
     std::cout <<   "╠══════════════════════════════════════════════════════╣\n";
-    std::cout <<   "║  Architecture: Feed→Bots→Matcher via lock-free SPSC  ║\n";
-    std::cout <<   "║  Logger:       async Thread 4, never blocks matcher   ║\n";
-    std::cout <<   "║  False sharing: eliminated via alignas(64) padding    ║\n";
+    std::cout <<   "║  Pipeline : Feed→Bots→Matcher  (SPSC, zero mutex)   ║\n";
+    std::cout <<   "║  Bot pool : each bot decision runs concurrently      ║\n";
+    std::cout <<   "║  Logger   : async Thread 4, never blocks matcher     ║\n";
+    std::cout <<   "║  Padding  : alignas(64) stats, no false sharing      ║\n";
     std::cout <<   "╚══════════════════════════════════════════════════════╝\n";
 
     return 0;

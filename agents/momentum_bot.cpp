@@ -21,3 +21,10 @@ double MomentumBot::earlierAvg() const {
 
 bool MomentumBot::shouldBuy()  const { return recentAvg() > earlierAvg(); }
 bool MomentumBot::shouldSell() const { return recentAvg() < earlierAvg(); }
+void MomentumBot::onPriceUpdate(double price, LimitOrderBook& lob, int timestep) {
+    placeOrders(price, lob);
+}
+
+void MomentumBot::onPriceUpdate(double price, FlatOrderBook& lob, int timestep) {
+    placeOrders(price, lob);
+}

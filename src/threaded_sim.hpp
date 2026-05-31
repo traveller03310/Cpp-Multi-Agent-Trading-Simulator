@@ -14,6 +14,7 @@
 #include "orderbook.hpp"
 #include "order.hpp"
 #include "../agents/bot.hpp"
+#include "thread_pool.hpp"
 
 // 4-thread pipeline:
 //   Thread 1 (feed)    →[SPSC TickQueue]→
@@ -66,6 +67,7 @@ public:
     uint64_t ticksProcessed()  const { return stats_[0].count.load(); }
     uint64_t ordersPlaced()    const { return stats_[1].count.load(); }
     uint64_t tradesExecuted()  const { return stats_[2].count.load(); }
+    size_t   poolThreads()     const { return pool_.threadCount(); }
 
 private:
     // Thread 1: reads CSV, pushes ticks to tickQueue_
@@ -209,5 +211,7 @@ private:
     std::atomic<bool> botDone_{false};
     double            lastPrice_{0.0};
 
-    ThreadStats stats_[3];  // [0]=ticks [1]=orders [2]=trades
+    ThreadStats stats_[3];
+
+    ThreadPool pool_;
 };

@@ -1,0 +1,512 @@
+Analysis of sampling trading_sim_profile (pid 62849) every 1 millisecond
+Process:         trading_sim_profile [62849]
+Path:            /Users/USER/*/trading_sim_profile
+Load Address:    0x104ae4000
+Identifier:      trading_sim_profile
+Version:         ???
+Code Type:       ARM64
+Parent Process:  zsh [62024]
+Target Type:     live task
+
+Date/Time:       2026-05-31 12:47:46.712 +0530
+Launch Time:     2026-05-31 12:47:46.559 +0530
+OS Version:      macOS 26.2 (25C56)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+----
+
+Call graph:
+    672 Thread_7786084: Main Thread
+    + 448 _dyld_start  (in dyld) + 0  [0x104d709c0]
+    + 206 start  (in dyld) + 7104  [0x19272dd04]
+    + ! 190 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 1568  [0x19272eb50]
+    + ! : 190 dyld4::JustInTimeLoader::handleStrongWeakDefOverrides(dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&)  (in dyld) + 208  [0x192751cbc]
+    + ! :   190 dyld3::MachOFile::forEachTreatAsWeakDef(void (char const*) block_pointer)  (in dyld) + 56  [0x19277e510]
+    + ! :     190 invocation function for block in dyld4::JustInTimeLoader::handleStrongWeakDefOverrides(dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&)  (in dyld) + 76  [0x192751e0c]
+    + ! :       190 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 848  [0x19274bb4c]
+    + ! :         188 invocation function for block in dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 1484  [0x19274d46c]
+    + ! :         | 188 invocation function for block in dyld4::JustInTimeLoader::handleStrongWeakDefOverrides(dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&)  (in dyld) + 112  [0x192751db4]
+    + ! :         |   187 DyldSharedCache::forEachPatchableUseOfExport(unsigned int, unsigned int, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 656  [0x192779250]
+    + ! :         |   + 104 PatchTableV4::forEachPatchableCacheUseOfExport(unsigned int, unsigned int, unsigned long long, unsigned long long (unsigned int) block_pointer, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 228  [0x192759a34]
+    + ! :         |   + ! 104 mach_o::Header::preferredLoadAddress() const  (in dyld) + 124  [0x1927a6564]
+    + ! :         |   + !   104 mach_o::Header::forEachSegment(void (mach_o::Header::SegmentInfo const&, bool&) block_pointer) const  (in dyld) + 124  [0x1927a7134]
+    + ! :         |   + !     104 mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 48  [0x1927a40b8]
+    + ! :         |   + 77 PatchTableV4::forEachPatchableCacheUseOfExport(unsigned int, unsigned int, unsigned long long, unsigned long long (unsigned int) block_pointer, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 384  [0x192759ad0]
+    + ! :         |   + ! 77 invocation function for block in dyld4::JustInTimeLoader::cacheWeakDefFixup(dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&)  (in dyld) + 88,144  [0x192751e7c,0x192751eb4]
+    + ! :         |   + 6 PatchTableV4::forEachPatchableCacheUseOfExport(unsigned int, unsigned int, unsigned long long, unsigned long long (unsigned int) block_pointer, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 316,208  [0x192759a8c,0x192759a20]
+    + ! :         |   1 DyldSharedCache::forEachPatchableUseOfExport(unsigned int, unsigned int, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 132  [0x192779044]
+    + ! :         |     1 DyldSharedCache::forEachPatchableGOTUseOfExport(unsigned int, unsigned int, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 72  [0x192778fb0]
+    + ! :         |       1 PatchTableV4::forEachPatchableGOTUseOfExport(unsigned int, unsigned int, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 64  [0x192759cf8]
+    + ! :         2 invocation function for block in dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 708  [0x19274d164]
+    + ! :           2 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 384  [0x19274c8dc]
+    + ! :             2 dyld3::MachOFile::trieWalk(Diagnostics&, unsigned char const*, unsigned char const*, char const*)  (in dyld) + 124  [0x19277d3e4]
+    + ! 9 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 1660  [0x19272ebac]
+    + ! : 8 dyld4::JustInTimeLoader::applyFixups(Diagnostics&, dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, bool, lsl::Vector<std::pair<dyld4::Loader const*, char const*>>*) const  (in dyld) + 616  [0x192752134]
+    + ! : | 8 dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 108  [0x19274b5f0]
+    + ! : |   8 dyld3::MachOAnalyzer::withVMLayout(Diagnostics&, void (mach_o::Layout const&) block_pointer) const  (in dyld) + 672  [0x192784e04]
+    + ! : |     8 invocation function for block in dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 264  [0x19274b704]
+    + ! : |       7 mach_o::Fixups::forEachBindTarget_ChainedFixups(Diagnostics&, void (mach_o::Fixups::BindTargetInfo const&, bool&) block_pointer) const  (in dyld) + 144  [0x192781464]
+    + ! : |       + 7 dyld3::MachOFile::forEachChainedFixupTarget(Diagnostics&, dyld_chained_fixups_header const*, linkedit_data_command const*, void (int, char const*, unsigned long long, bool, bool&) block_pointer)  (in dyld) + 256  [0x19277ce80]
+    + ! : |       +   7 invocation function for block in mach_o::Fixups::forEachBindTarget_ChainedFixups(Diagnostics&, void (mach_o::Fixups::BindTargetInfo const&, bool&) block_pointer) const  (in dyld) + 72  [0x192781798]
+    + ! : |       +     7 invocation function for block in dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 100  [0x19274b794]
+    + ! : |       +       6 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 848  [0x19274bb4c]
+    + ! : |       +       ! 5 invocation function for block in dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 708  [0x19274d164]
+    + ! : |       +       ! : 4 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 384  [0x19274c8dc]
+    + ! : |       +       ! : | 4 dyld3::MachOFile::trieWalk(Diagnostics&, unsigned char const*, unsigned char const*, char const*)  (in dyld) + 124,272,...  [0x19277d3e4,0x19277d478,...]
+    + ! : |       +       ! : 1 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 344  [0x19274c8b4]
+    + ! : |       +       ! 1 invocation function for block in dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 616  [0x19274d108]
+    + ! : |       +       1 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 544  [0x19274ba1c]
+    + ! : |       +         1 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 384  [0x19274c8dc]
+    + ! : |       +           1 dyld3::MachOFile::trieWalk(Diagnostics&, unsigned char const*, unsigned char const*, char const*)  (in dyld) + 124  [0x19277d3e4]
+    + ! : |       1 mach_o::Fixups::forEachBindTarget_ChainedFixups(Diagnostics&, void (mach_o::Fixups::BindTargetInfo const&, bool&) block_pointer) const  (in dyld) + 264  [0x1927814dc]
+    + ! : |         1 dyld3::MachOFile::forEachTreatAsWeakDef(void (char const*) block_pointer)  (in dyld) + 56  [0x19277e510]
+    + ! : |           1 invocation function for block in mach_o::Fixups::forEachBindTarget_ChainedFixups(Diagnostics&, void (mach_o::Fixups::BindTargetInfo const&, bool&) block_pointer) const  (in dyld) + 76  [0x192781808]
+    + ! : |             1 invocation function for block in dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 100  [0x19274b794]
+    + ! : |               1 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 848  [0x19274bb4c]
+    + ! : |                 1 invocation function for block in dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 1484  [0x19274d46c]
+    + ! : |                   1 invocation function for block in dyld4::JustInTimeLoader::applyFixups(Diagnostics&, dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, bool, lsl::Vector<std::pair<dyld4::Loader const*, char const*>>*) const  (in dyld) + 112  [0x1927522f0]
+    + ! : |                     1 DyldSharedCache::forEachPatchableUseOfExport(unsigned int, unsigned int, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 656  [0x192779250]
+    + ! : |                       1 PatchTableV4::forEachPatchableCacheUseOfExport(unsigned int, unsigned int, unsigned long long, unsigned long long (unsigned int) block_pointer, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld) + 228  [0x192759a34]
+    + ! : |                         1 mach_o::Header::preferredLoadAddress() const  (in dyld) + 124  [0x1927a6564]
+    + ! : |                           1 mach_o::Header::forEachSegment(void (mach_o::Header::SegmentInfo const&, bool&) block_pointer) const  (in dyld) + 124  [0x1927a7134]
+    + ! : |                             1 mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 40  [0x1927a40b0]
+    + ! : 1 dyld4::JustInTimeLoader::applyFixups(Diagnostics&, dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, bool, lsl::Vector<std::pair<dyld4::Loader const*, char const*>>*) const  (in dyld) + 676  [0x192752170]
+    + ! :   1 dyld4::Loader::applyFixupsGeneric(Diagnostics&, dyld4::RuntimeState&, unsigned long long, dyld3::Array<void const*> const&, dyld3::Array<void const*> const&, bool, dyld3::Array<dyld4::Loader::MissingFlatLazySymbol> const&) const  (in dyld) + 472  [0x192749d8c]
+    + ! :     1 dyld3::MachOAnalyzer::forEachRebaseLocation_Opcodes(Diagnostics&, void (unsigned long long, bool&) block_pointer) const  (in dyld) + 440  [0x19278c178]
+    + ! :       1 dyld3::MachOAnalyzer::forEachRebase_Opcodes(Diagnostics&, dyld3::MachOLoaded::LinkEditInfo const&, mach_o::Header::SegmentInfo const*, void (char const*, dyld3::MachOLoaded::LinkEditInfo const&, mach_o::Header::SegmentInfo const*, bool, unsigned int, unsigned char, unsigned long long, dyld3::MachOAnalyzer::Rebase, bool&) block_pointer) const  (in dyld) + 608  [0x19278c414]
+    + ! :         1 invocation function for block in dyld4::Loader::applyFixupsGeneric(Diagnostics&, dyld4::RuntimeState&, unsigned long long, dyld3::Array<void const*> const&, dyld3::Array<void const*> const&, bool, dyld3::Array<dyld4::Loader::MissingFlatLazySymbol> const&) const  (in dyld) + 28  [0x19274a3c0]
+    + ! 5 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 2996  [0x19272f0e4]
+    + ! : 5 dyld4::RuntimeState::notifyDebuggerLoad(std::span<dyld4::Loader const*, 18446744073709551615ul> const&)  (in dyld) + 432  [0x19273e2c4]
+    + ! :   5 dyld4::ExternallyViewableState::addImages(lsl::Allocator&, lsl::Allocator&, std::span<dyld4::ExternallyViewableState::ImageInfo, 18446744073709551615ul> const&)  (in dyld) + 544  [0x192775964]
+    + ! :     5 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 264  [0x192775554]
+    + ! :       5 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x19275eaec]
+    + ! :         5 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 220  [0x19275e760]
+    + ! :           5 mach_msg_overwrite  (in dyld) + 244  [0x1927ad454]
+    + ! :             5 mach_msg2_internal  (in dyld) + 76  [0x1927ad2a8]
+    + ! :               5 mach_msg2_trap  (in dyld) + 8  [0x19272672c]
+    + ! 2 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 952  [0x19272e8e8]
+    + !   1 dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 164  [0x1927515dc]
+    + !   | 1 mach_o::Header::forEachLinkedDylib(void (char const*, mach_o::LinkedDylibAttributes, mach_o::Version32, mach_o::Version32, bool, bool&) block_pointer) const  (in dyld) + 172  [0x1927a5f44]
+    + !   |   1 mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 208  [0x1927a4158]
+    + !   |     1 invocation function for block in mach_o::Header::forEachLinkedDylib(void (char const*, mach_o::LinkedDylibAttributes, mach_o::Version32, mach_o::Version32, bool, bool&) block_pointer) const  (in dyld) + 136  [0x1927a6214]
+    + !   |       1 invocation function for block in dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 456  [0x1927518cc]
+    + !   |         1 dyld4::Loader::getLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&)  (in dyld) + 928  [0x192747140]
+    + !   |           1 dyld4::Loader::forEachPath(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer)  (in dyld) + 260  [0x1927468a0]
+    + !   |             1 dyld4::ProcessConfig::PathOverrides::forEachPathVariant(char const*, mach_o::Platform, bool, bool, bool&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer) const  (in dyld) + 1824  [0x192731948]
+    + !   |               1 dyld4::Loader::forEachResolvedAtPathVar(dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, dyld4::ProcessConfig::PathOverrides::Type, bool&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer)  (in dyld) + 764  [0x192746d60]
+    + !   |                 1 invocation function for block in dyld4::Loader::getLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&)  (in dyld) + 2892  [0x192748068]
+    + !   |                   1 dyld4::Loader::makeDiskLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, bool, unsigned int, mach_o::Layout const*)  (in dyld) + 176  [0x192746638]
+    + !   |                     1 dyld4::JustInTimeLoader::makeJustInTimeLoaderDisk(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, bool, unsigned int, mach_o::Layout const*)  (in dyld) + 176  [0x19275396c]
+    + !   |                       1 dyld4::SyscallDelegate::mapFileReadOnly(Diagnostics&, char const*, int*, unsigned long*, dyld4::FileID*, bool*, char*) const  (in dyld) + 144  [0x192758c98]
+    + !   |                         1 __mmap  (in dyld) + 8  [0x19272a190]
+    + !   1 dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 304  [0x192751668]
+    + !     1 dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 304  [0x192751668]
+    + !       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !               1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                 1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                   1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                     1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                               1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                 1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                   1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                     1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                               1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                 1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                   1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                     1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                               1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                 1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                   1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                     1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                               1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                 1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                   1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                     1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                       1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                         1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                           1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                             1 dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+    + !                                                                                               1 dyld4::PrebuiltLoader::map(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&, bool) const  (in dyld) + 932  [0x192754e38]
+    + 16 start  (in dyld) + 6060  [0x104d748f0]
+    + ! 16 dyld4::ExternallyViewableState::createMinimalInfo(lsl::Allocator&, unsigned long long, char const*, unsigned long long, char const*, DyldSharedCache const*)  (in dyld) + 1660  [0x104dbbd80]
+    + !   16 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 264  [0x104dbc554]
+    + !     16 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x104da5aec]
+    + !       16 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 220  [0x104da5760]
+    + !         16 mach_msg_overwrite  (in dyld) + 244  [0x104df4454]
+    + !           16 mach_msg2_internal  (in dyld) + 76  [0x104df42a8]
+    + !             16 mach_msg2_trap  (in dyld) + 8  [0x104d6d72c]
+    + 1 start  (in dyld) + 4752  [0x104d743d4]
+    + ! 1 dyld4::ExternallyViewableState::createMinimalInfo(lsl::Allocator&, unsigned long long, char const*, unsigned long long, char const*, DyldSharedCache const*)  (in dyld) + 1660  [0x104dbbd80]
+    + !   1 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 264  [0x104dbc554]
+    + !     1 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x104da5aec]
+    + !       1 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 220  [0x104da5760]
+    + !         1 mach_msg_overwrite  (in dyld) + 244  [0x104df4454]
+    + !           1 mach_msg2_internal  (in dyld) + 76  [0x104df42a8]
+    + !             1 mach_msg2_trap  (in dyld) + 8  [0x104d6d72c]
+    + 1 start  (in dyld) + 4076  [0x19272d130]
+    +   1 dyld4::ExternallyViewableState::createMinimalInfo(lsl::Allocator&, unsigned long long, char const*, unsigned long long, char const*, DyldSharedCache const*)  (in dyld) + 1660  [0x192774d80]
+    +     1 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 264  [0x192775554]
+    +       1 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x19275eaec]
+    +         1 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 220  [0x19275e760]
+    +           1 mach_msg_overwrite  (in dyld) + 244  [0x1927ad454]
+    +             1 mach_msg2_internal  (in dyld) + 76  [0x1927ad2a8]
+    +               1 mach_msg2_trap  (in dyld) + 8  [0x19272672c]
+    38 Thread_7786084   DispatchQueue_1: com.apple.main-thread  (serial)
+    + 35 start  (in dyld) + 7184  [0x19272dd54]
+    + ! 17 main  (in trading_sim_profile) + 236  [0x104af22ac]  main.cpp:150
+    + ! : 14 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 80  [0x104ae7c1c]  main.cpp:88
+    + ! : | 6 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 424  [0x104aecde8]  market_data.cpp:13
+    + ! : | + 6 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 504  [0x10520039c]
+    + ! : | +   5 std::basic_filebuf<char>::underflow()  (in libstdc++.6.dylib) + 912  [0x105256418]
+    + ! : | +   ! 5 std::__basic_file<char>::xsgetn(char*, long)  (in libstdc++.6.dylib) + 48  [0x10521bf70]
+    + ! : | +   !   5 read  (in libsystem_kernel.dylib) + 8  [0x192ab3908]
+    + ! : | +   1 std::basic_filebuf<char>::underflow()  (in libstdc++.6.dylib) + 44  [0x1052560b4]
+    + ! : | 2 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 860  [0x104aecf9c]  market_data.cpp:22
+    + ! : | + 2 strtoll_l  (in libsystem_c.dylib) + 448,456  [0x1929824b8,0x1929824c0]
+    + ! : | 2 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 924  [0x104aecfdc]  market_data.cpp:24
+    + ! : | + 1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 244  [0x105200298]
+    + ! : | + ! 1 _platform_memchr  (in libsystem_platform.dylib) + 76  [0x192afce0c]
+    + ! : | + 1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 284  [0x1052002c0]
+    + ! : | +   1 std::__cxx11::basic_string<char>::_M_append(char const*, unsigned long)  (in libstdc++.6.dylib) + 64  [0x10528f8e8]
+    + ! : | +     1 _platform_memmove  (in libsystem_platform.dylib) + 452  [0x192aff524]
+    + ! : | 1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 584  [0x104aece88]  market_data.cpp:15
+    + ! : | + 1 std::basic_ios<char>::init(std::basic_streambuf<char>*)  (in libstdc++.6.dylib) + 24  [0x105260ab8]
+    + ! : | +   1 std::ios_base::_M_init()  (in libstdc++.6.dylib) + 48  [0x1051f7e10]
+    + ! : | +     1 std::locale::locale()  (in libstdc++.6.dylib) + 36  [0x10520e324]
+    + ! : | 1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 948  [0x104aecff4]  market_data.cpp:27
+    + ! : | + 1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 284  [0x1052002c0]
+    + ! : | +   1 std::__cxx11::basic_string<char>::_M_append(char const*, unsigned long)  (in libstdc++.6.dylib) + 64  [0x10528f8e8]
+    + ! : | +     1 _platform_memmove  (in libsystem_platform.dylib) + 428  [0x192aff50c]
+    + ! : | 1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 1076  [0x104aed074]  market_data.cpp:31
+    + ! : | 1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 216  [0x104aecd18]  market_data.cpp:8
+    + ! : |   1 std::basic_filebuf<char>::open(char const*, std::_Ios_Openmode)  (in libstdc++.6.dylib) + 64  [0x10525ba64]
+    + ! : |     1 std::__basic_file<char>::open(char const*, std::_Ios_Openmode, int)  (in libstdc++.6.dylib) + 68  [0x10521be74]
+    + ! : |       1 fopen  (in libsystem_c.dylib) + 200  [0x192991888]
+    + ! : |         1 __sflags  (in libsystem_c.dylib) + 8  [0x19299196c]
+    + ! : 2 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 1136  [0x104ae803c]  main.cpp:113
+    + ! : | 1 matchOrders(LimitOrderBook&, std::vector<std::unique_ptr<Bot>>&, std::__cxx11::basic_string<char>&, int)  (in trading_sim_profile) + 504  [0x104aed9a0]  matching_engine.cpp:37
+    + ! : | + 1 std::ostream::_M_insert<long>(long)  (in libstdc++.6.dylib) + 132  [0x10527f3b4]
+    + ! : | +   1 std::num_put<char, std::ostreambuf_iterator<char>>::do_put(std::ostreambuf_iterator<char>, std::ios_base&, char, long) const  (in libstdc++.6.dylib) + 0  [0x105272280]
+    + ! : | 1 matchOrders(LimitOrderBook&, std::vector<std::unique_ptr<Bot>>&, std::__cxx11::basic_string<char>&, int)  (in trading_sim_profile) + 524  [0x104aed9b4]  matching_engine.cpp:37
+    + ! : |   1 std::__ostream_insert<char>(std::basic_ostream<char>&, char const*, long)  (in libstdc++.6.dylib) + 384  [0x10527ee40]
+    + ! : |     1 std::basic_filebuf<char>::xsputn(char const*, long)  (in libstdc++.6.dylib) + 176  [0x105256a70]
+    + ! : |       1 std::__basic_file<char>::xsputn_2(char const*, long, char const*, long)  (in libstdc++.6.dylib) + 112  [0x10521c0b8]
+    + ! : |         1 writev  (in libsystem_kernel.dylib) + 8  [0x192ab6b78]
+    + ! : 1 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 1724  [0x104ae8288]  main.cpp:122
+    + ! :   1 std::basic_ofstream<char>::basic_ofstream(std::__cxx11::basic_string<char> const&, std::_Ios_Openmode)  (in libstdc++.6.dylib) + 160  [0x10525c544]
+    + ! :     1 std::basic_filebuf<char>::open(char const*, std::_Ios_Openmode)  (in libstdc++.6.dylib) + 64  [0x10525ba64]
+    + ! :       1 std::__basic_file<char>::open(char const*, std::_Ios_Openmode, int)  (in libstdc++.6.dylib) + 68  [0x10521be74]
+    + ! :         1 fopen  (in libsystem_c.dylib) + 244  [0x1929918b4]
+    + ! :           1 open$NOCANCEL  (in libsystem_kernel.dylib) + 64  [0x192ac7724]
+    + ! :             1 __open_nocancel  (in libsystem_kernel.dylib) + 8  [0x192ab3934]
+    + ! 13 main  (in trading_sim_profile) + 468  [0x104af2394]  main.cpp:159
+    + ! : 12 ThreadedSim::run()  (in trading_sim_profile) + 1092  [0x104ae9fa8]  threaded_sim.hpp:57
+    + ! : | 12 std::thread::join()  (in libstdc++.6.dylib) + 32  [0x105210fcc]
+    + ! : |   12 _pthread_join  (in libsystem_pthread.dylib) + 608  [0x192af80ac]
+    + ! : |     12 __ulock_wait  (in libsystem_kernel.dylib) + 8  [0x192ab4ae4]
+    + ! : 1 ThreadedSim::run()  (in trading_sim_profile) + 1240  [0x104aea03c]  stl_iterator_base_funcs.h:65
+    + ! :   1 std::basic_filebuf<char>::close()  (in libstdc++.6.dylib) + 172  [0x10525afd0]
+    + ! :     1 std::__basic_file<char>::close()  (in libstdc++.6.dylib) + 56  [0x10521bf20]
+    + ! :       1 fclose  (in libsystem_c.dylib) + 228  [0x19299fdcc]
+    + ! :         1 __close_nocancel  (in libsystem_kernel.dylib) + 8  [0x192ab4570]
+    + ! 4 main  (in trading_sim_profile) + 328  [0x104af2308]  main.cpp:151
+    + ! : 1 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 1136  [0x104ae803c]  main.cpp:113
+    + ! : | 1 matchOrders(LimitOrderBook&, std::vector<std::unique_ptr<Bot>>&, std::__cxx11::basic_string<char>&, int)  (in trading_sim_profile) + 596  [0x104aed9fc]  matching_engine.cpp:39
+    + ! : |   1 std::__ostream_insert<char>(std::basic_ostream<char>&, char const*, long)  (in libstdc++.6.dylib) + 384  [0x10527ee40]
+    + ! : |     1 std::basic_filebuf<char>::xsputn(char const*, long)  (in libstdc++.6.dylib) + 176  [0x105256a70]
+    + ! : |       1 std::__basic_file<char>::xsputn_2(char const*, long, char const*, long)  (in libstdc++.6.dylib) + 112  [0x10521c0b8]
+    + ! : |         1 writev  (in libsystem_kernel.dylib) + 8  [0x192ab6b78]
+    + ! : 1 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 1724  [0x104ae8288]  main.cpp:122
+    + ! : | 1 std::basic_ofstream<char>::basic_ofstream(std::__cxx11::basic_string<char> const&, std::_Ios_Openmode)  (in libstdc++.6.dylib) + 160  [0x10525c544]
+    + ! : |   1 std::basic_filebuf<char>::open(char const*, std::_Ios_Openmode)  (in libstdc++.6.dylib) + 64  [0x10525ba64]
+    + ! : |     1 std::__basic_file<char>::open(char const*, std::_Ios_Openmode, int)  (in libstdc++.6.dylib) + 68  [0x10521be74]
+    + ! : |       1 fopen  (in libsystem_c.dylib) + 244  [0x1929918b4]
+    + ! : |         1 open$NOCANCEL  (in libsystem_kernel.dylib) + 64  [0x192ac7724]
+    + ! : |           1 __open_nocancel  (in libsystem_kernel.dylib) + 8  [0x192ab3934]
+    + ! : 1 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 2072  [0x104ae83e4]  main.cpp:125
+    + ! : | 1 std::operator<<<std::char_traits<char>>(std::basic_ostream<char>&, char const*)  (in libstdc++.6.dylib) + 48  [0x10527f170]
+    + ! : |   1 std::__ostream_insert<char>(std::basic_ostream<char>&, char const*, long)  (in libstdc++.6.dylib) + 384  [0x10527ee40]
+    + ! : |     1 std::basic_filebuf<char>::xsputn(char const*, long)  (in libstdc++.6.dylib) + 176  [0x105256a70]
+    + ! : |       1 std::__basic_file<char>::xsputn_2(char const*, long, char const*, long)  (in libstdc++.6.dylib) + 112  [0x10521c0b8]
+    + ! : |         1 writev  (in libsystem_kernel.dylib) + 8  [0x192ab6b78]
+    + ! : 1 runSingleThreaded(std::__cxx11::basic_string<char> const&, std::__cxx11::basic_string<char> const&, std::vector<std::unique_ptr<Bot>>&, double&, int) (.constprop.0)  (in trading_sim_profile) + 80  [0x104ae7c1c]  main.cpp:88
+    + ! :   1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 424  [0x104aecde8]  market_data.cpp:13
+    + ! :     1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 504  [0x10520039c]
+    + ! :       1 std::basic_filebuf<char>::underflow()  (in libstdc++.6.dylib) + 912  [0x105256418]
+    + ! :         1 std::__basic_file<char>::xsgetn(char*, long)  (in libstdc++.6.dylib) + 48  [0x10521bf70]
+    + ! :           1 read  (in libsystem_kernel.dylib) + 8  [0x192ab3908]
+    + ! 1 main  (in trading_sim_profile) + 756  [0x104af24b4]  main.cpp:170
+    + !   1 ThreadedSim::run()  (in trading_sim_profile) + 1108  [0x104ae9fb8]  threaded_sim.hpp:59
+    + !     1 std::thread::join()  (in libstdc++.6.dylib) + 32  [0x105210fcc]
+    + !       1 _pthread_join  (in libsystem_pthread.dylib) + 608  [0x192af80ac]
+    + !         1 __ulock_wait  (in libsystem_kernel.dylib) + 8  [0x192ab4ae4]
+    + 3 start  (in dyld) + 7104  [0x19272dd04]
+    +   2 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 3112  [0x19272f158]
+    +   : 2 dyld4::APIs::runAllInitializersForMain()  (in dyld) + 400  [0x19276d04c]
+    +   :   2 dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const  (in dyld) + 716  [0x19274b530]
+    +   :     2 dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_0::operator()() const  (in dyld) + 180  [0x19274fe50]
+    +   :       1 dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&, dyld3::Array<dyld4::Loader const*>&) const  (in dyld) + 212  [0x19274b1b4]
+    +   :       | 1 dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&, dyld3::Array<dyld4::Loader const*>&) const  (in dyld) + 308  [0x19274b214]
+    +   :       |   1 dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const  (in dyld) + 36  [0x1927528b0]
+    +   :       |     1 dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const  (in dyld) + 172  [0x19274aa68]
+    +   :       |       1 dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const  (in dyld) + 516  [0x192788220]
+    +   :       |         1 mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 124  [0x1927a59f0]
+    +   :       |           1 mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 208  [0x1927a4158]
+    +   :       |             1 invocation function for block in mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 312  [0x1927a7534]
+    +   :       |               1 invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const  (in dyld) + 224  [0x1927886cc]
+    +   :       1 dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&, dyld3::Array<dyld4::Loader const*>&) const  (in dyld) + 308  [0x19274b214]
+    +   :         1 dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const  (in dyld) + 36  [0x1927528b0]
+    +   :           1 dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const  (in dyld) + 172  [0x19274aa68]
+    +   :             1 dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const  (in dyld) + 516  [0x192788220]
+    +   :               1 mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 124  [0x1927a59f0]
+    +   :                 1 mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 208  [0x1927a4158]
+    +   :                   1 invocation function for block in mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 312  [0x1927a7534]
+    +   :                     1 invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const  (in dyld) + 324  [0x192788730]
+    +   :                       1 invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const  (in dyld) + 444  [0x19274acb0]
+    +   :                         1 _GLOBAL__sub_I_main.cpp  (in trading_sim_profile) + 28  [0x104aecbdc]  main.cpp:195
+    +   :                           1 std::ios_base::Init::Init() (.part.0)  (in libstdc++.6.dylib) + 116  [0x1051f7054]
+    +   :                             1 std::locale::locale()  (in libstdc++.6.dylib) + 44  [0x10520e32c]
+    +   :                               1 pthread_once  (in libsystem_pthread.dylib) + 100  [0x192af1ae8]
+    +   :                                 1 _os_once  (in libsystem_platform.dylib) + 76  [0x192afcb2c]
+    +   :                                   1 _os_once_callout  (in libsystem_platform.dylib) + 32  [0x192afcb58]
+    +   :                                     1 __pthread_once_handler  (in libsystem_pthread.dylib) + 72  [0x192af1b4c]
+    +   :                                       1 std::locale::_S_initialize_once()  (in libstdc++.6.dylib) + 60  [0x10520e240]
+    +   :                                         1 std::locale::_Impl::_Impl(unsigned long)  (in libstdc++.6.dylib) + 160  [0x10520d720]
+    +   :                                           1 std::locale::facet::_S_get_c_name()  (in libstdc++.6.dylib) + 0  [0x1051f89a0]
+    +   1 dyld4::prepare(dyld4::APIs&, mach_o::Header const*)  (in dyld) + 3188  [0x19272f1a4]
+    +     1 dyld4::ExternallyViewableState::setDyldState(unsigned char)  (in dyld) + 148  [0x192773cb8]
+    +       1 dyld4::ExternallyViewableState::generateAtlas(lsl::Allocator&)  (in dyld) + 752  [0x1927740dc]
+    +         1 AAREncoder::encode(ByteStream&) const  (in dyld) + 140  [0x19275f1e0]
+    +           1 AAREncoder::encodeFile(AAREncoder::File const&, ByteStream&) const  (in dyld) + 40  [0x19275ec08]
+    +             1 cksum(std::span<std::byte, 18446744073709551615ul>)  (in dyld) + 28  [0x19278d20c]
+    13 Thread_7786165
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786166
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786167
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786168
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786169
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786170
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786171
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    13 Thread_7786172
+    + 13 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   13 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     13 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       13 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         13 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           13 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    12 Thread_7786173
+    + 12 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   12 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     12 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       12 AsyncLogger::loggerLoop()  (in trading_sim_profile) + 124  [0x104ae5d1c]  stl_list.h:49
+    +         12 cthread_yield  (in libsystem_pthread.dylib) + 36  [0x192af2bc4]
+    +           12 swtch_pri  (in libsystem_kernel.dylib) + 8  [0x192ab2c88]
+    12 Thread_7786174
+    + 12 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   12 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     12 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       12 std::thread::_State_impl<std::thread::_Invoker<std::tuple<ThreadedSim::run()::'lambda'()>>>::_M_run()  (in trading_sim_profile) + 52  [0x104ae53d8]  main.cpp:253
+    +         3 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 816  [0x104aecf70]  market_data.cpp:21
+    +         ! 2 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 312  [0x1052002dc]
+    +         ! 1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 284  [0x1052002c0]
+    +         !   1 std::__cxx11::basic_string<char>::_M_append(char const*, unsigned long)  (in libstdc++.6.dylib) + 116  [0x10528f91c]
+    +         !     1 std::__cxx11::basic_string<char>::_M_mutate(unsigned long, unsigned long, char const*, unsigned long)  (in libstdc++.6.dylib) + 96  [0x10528dfd0]
+    +         !       1 operator new(unsigned long)  (in libstdc++.6.dylib) + 28  [0x1051e339c]
+    +         !         1 nanov2_malloc_type_zero_on_alloc  (in libsystem_malloc.dylib) + 196  [0x192912848]
+    +         2 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 424  [0x104aecde8]  market_data.cpp:13
+    +         ! 2 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 504  [0x10520039c]
+    +         !   2 std::basic_filebuf<char>::underflow()  (in libstdc++.6.dylib) + 912  [0x105256418]
+    +         !     2 std::__basic_file<char>::xsgetn(char*, long)  (in libstdc++.6.dylib) + 48  [0x10521bf70]
+    +         !       2 read  (in libsystem_kernel.dylib) + 8  [0x192ab3908]
+    +         2 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 584  [0x104aece88]  market_data.cpp:15
+    +         ! 2 std::basic_ios<char>::init(std::basic_streambuf<char>*)  (in libstdc++.6.dylib) + 36  [0x105260ac4]
+    +         !   1 std::basic_ios<char>::_M_cache_locale(std::locale const&)  (in libstdc++.6.dylib) + 96  [0x1052609b0]
+    +         !   : 1 std::locale::id::_M_id() const  (in libstdc++.6.dylib) + 0  [0x1051f9720]
+    +         !   1 std::basic_ios<char>::_M_cache_locale(std::locale const&)  (in libstdc++.6.dylib) + 116  [0x1052609c4]
+    +         1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 784  [0x104aecf50]  market_data.cpp:15
+    +         ! 1 std::basic_ios<char>::init(std::basic_streambuf<char>*)  (in libstdc++.6.dylib) + 24  [0x105260ab8]
+    +         !   1 std::ios_base::_M_init()  (in libstdc++.6.dylib) + 48  [0x1051f7e10]
+    +         !     1 std::locale::locale()  (in libstdc++.6.dylib) + 52  [0x10520e334]
+    +         1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 1536  [0x104aed240]  market_data.cpp:15
+    +         ! 1 nanov2_malloc_type_zero_on_alloc  (in libsystem_malloc.dylib) + 492  [0x192912970]
+    +         1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 860  [0x104aecf9c]  market_data.cpp:22
+    +         ! 1 strtoll_l  (in libsystem_c.dylib) + 96  [0x192982358]
+    +         1 MarketData::loadCSV(std::__cxx11::basic_string<char> const&)  (in trading_sim_profile) + 924  [0x104aecfdc]  market_data.cpp:24
+    +         ! 1 std::getline<char>(std::basic_istream<char>&, std::__cxx11::basic_string<char>&, char)  (in libstdc++.6.dylib) + 284  [0x1052002c0]
+    +         !   1 std::__cxx11::basic_string<char>::_M_append(char const*, unsigned long)  (in libstdc++.6.dylib) + 44  [0x10528f8d4]
+    +         1 _nanov2_free  (in libsystem_malloc.dylib) + 852  [0x19291224c]
+    12 Thread_7786175
+    + 12 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   12 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     12 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       12 ThreadedSim::botThread()  (in trading_sim_profile) + 1200  [0x104ae667c]  stl_iterator_base_funcs.h:104
+    +         12 cthread_yield  (in libsystem_pthread.dylib) + 36  [0x192af2bc4]
+    +           12 swtch_pri  (in libsystem_kernel.dylib) + 8  [0x192ab2c88]
+    12 Thread_7786176
+    + 12 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   12 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     12 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       11 ThreadedSim::matchThread(AsyncLogger&)  (in trading_sim_profile) + 216  [0x104ae969c]  stl_iterator_base_funcs.h:155
+    +       ! 11 cthread_yield  (in libsystem_pthread.dylib) + 36  [0x192af2bc4]
+    +       !   11 swtch_pri  (in libsystem_kernel.dylib) + 8  [0x192ab2c88]
+    +       1 ThreadedSim::matchThread(AsyncLogger&)  (in trading_sim_profile) + 216  [0x104ae969c]  stl_iterator_base_funcs.h:156
+    1 Thread_7786177
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786178
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786179
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786180
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786181
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786182
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786183
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786184
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+    +         1 _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+    +           1 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x192ab64f8]
+    1 Thread_7786185
+    + 1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+    +   1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+    +     1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+    +       1 AsyncLogger::loggerLoop()  (in trading_sim_profile) + 324  [0x104ae5de4]  async_logger.hpp:44
+    +         1 std::ostream::flush()  (in libstdc++.6.dylib) + 88  [0x10527e0b8]
+    +           1 std::basic_filebuf<char>::sync()  (in libstdc++.6.dylib) + 36  [0x105255b24]
+    +             1 std::basic_filebuf<char>::overflow(int)  (in libstdc++.6.dylib) + 232  [0x105257f0c]
+    +               1 std::basic_filebuf<char>::_M_convert_to_external(char*, long)  (in libstdc++.6.dylib) + 196  [0x105257a64]
+    +                 1 std::__basic_file<char>::xsputn(char const*, long)  (in libstdc++.6.dylib) + 32  [0x10521bfe4]
+    +                   1 std::__basic_file<char>::fd()  (in libstdc++.6.dylib) + 16  [0x10521bec0]
+    +                     1 fileno  (in libsystem_c.dylib) + 36  [0x192995e28]
+    +                       1 funlockfile  (in libsystem_c.dylib) + 40  [0x192991494]
+    +                         1 _pthread_mutex_firstfit_unlock_slow  (in libsystem_pthread.dylib) + 204  [0x192af0b0c]
+    1 Thread_7786188
+      1 thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+        1 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+          1 execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+            1 ThreadedSim::matchThread(AsyncLogger&)  (in trading_sim_profile) + 716  [0x104ae9890]  threaded_sim.hpp:146
+              1 ThreadedSim::matchAndLog(LimitOrderBook&, std::__cxx11::basic_string<char>&, int)  (in trading_sim_profile) + 2136  [0x104ae727c]  stl_iterator_base_funcs.h:183
+
+Total number in stack (recursive counted multiple, when >=5):
+        44       dyld4::PrebuiltLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 424  [0x192755020]
+        22       _pthread_start  (in libsystem_pthread.dylib) + 136  [0x192af5c08]
+        22       execute_native_thread_routine  (in libstdc++.6.dylib) + 28  [0x105210f5c]
+        22       thread_start  (in libsystem_pthread.dylib) + 8  [0x192af0ba8]
+        16       ThreadPool::ThreadPool(unsigned long)::'lambda'()::operator()() const  (in trading_sim_profile) + 452  [0x104ae5fd4]  condition_variable:105
+        16       __psynch_cvwait  (in libsystem_kernel.dylib) + 0  [0x192ab64f0]
+        16       _pthread_cond_wait  (in libsystem_pthread.dylib) + 984  [0x192af60dc]
+
+Sort by top of stack, same collapsed (when >= 5):
+        _dyld_start  (in dyld)        448
+        __psynch_cvwait  (in libsystem_kernel.dylib)        112
+        mach_o::Header::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld)        105
+        invocation function for block in dyld4::JustInTimeLoader::cacheWeakDefFixup(dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&)  (in dyld)        77
+        swtch_pri  (in libsystem_kernel.dylib)        35
+        mach_msg2_trap  (in dyld)        23
+        __ulock_wait  (in libsystem_kernel.dylib)        13
+        read  (in libsystem_kernel.dylib)        8
+        dyld3::MachOFile::trieWalk(Diagnostics&, unsigned char const*, unsigned char const*, char const*)  (in dyld)        7
+        PatchTableV4::forEachPatchableCacheUseOfExport(unsigned int, unsigned int, unsigned long long, unsigned long long (unsigned int) block_pointer, void (unsigned long long, dyld3::MachOFile::PointerMetaData, unsigned long long, bool) block_pointer) const  (in dyld)        6
+
+Binary images description not available
+

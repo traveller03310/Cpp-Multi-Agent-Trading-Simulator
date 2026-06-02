@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <cmath>
 
 class LimitOrderBook;
 class FlatOrderBook;
@@ -7,31 +9,69 @@ class FlatOrderBook;
 class Bot {
 public:
     std::string name;
-    double cash        = 100000.0;
-    int    position    = 0;
-    double realizedPnl = 0.0;
+    double cash          = 100000.0;
+    int    position      = 0;
+    double realizedPnl   = 0.0;
+    double totalCostPaid = 0.0;
 
-    Bot(std::string n) : name(n) {}
+    struct TradeRecord { double pnl; double price; int qty; bool wasBuyer; };
+    std::vector<TradeRecord> tradeHistory;
+
+    Bot(std::string n) : name(std::move(n)) {}
     virtual ~Bot() = default;
 
-    virtual void onPriceUpdate(double price, LimitOrderBook& lob, int timestep);
-    virtual void onPriceUpdate(double price, FlatOrderBook&  lob, int timestep);
+    virtual void onPriceUpdate(double price, LimitOrderBook& lob, int timestep) = 0;
+    virtual void onPriceUpdate(double price, FlatOrderBook&  lob, int timestep) = 0;
 
     void recordTrade(double price, int qty, bool buyer) {
+        double tradePnl = 0.0;
         if (buyer) {
             cash     -= price * qty;
             position += qty;
+            double prev = avgCostBasis_ * (position - qty);
+            if (position > 0) avgCostBasis_ = (prev + price * qty) / position;
         } else {
-            realizedPnl += (price - avgCostBasis) * qty;
+            tradePnl    = (price - avgCostBasis_) * qty;
+            realizedPnl += tradePnl;
             cash        += price * qty;
             position    -= qty;
         }
+        tradeHistory.push_back({tradePnl, price, qty, buyer});
     }
 
     double pnl(double currentPrice) const {
         return realizedPnl + (cash - 100000.0) + position * currentPrice;
     }
 
+    double sharpe() const {
+        if (tradeHistory.size() < 2) return 0.0;
+        double sum = 0.0;
+        for (auto& t : tradeHistory) sum += t.pnl;
+        double mean = sum / tradeHistory.size();
+        double var  = 0.0;
+        for (auto& t : tradeHistory) var += (t.pnl - mean) * (t.pnl - mean);
+        double std = std::sqrt(var / tradeHistory.size());
+        return std == 0.0 ? 0.0 : (mean / std) * std::sqrt(252.0);
+    }
+
+    double maxDrawdown() const {
+        double peak = 0.0, maxDD = 0.0, running = 0.0;
+        for (auto& t : tradeHistory) {
+            running += t.pnl;
+            if (running > peak) peak = running;
+            double dd = peak - running;
+            if (dd > maxDD) maxDD = dd;
+        }
+        return maxDD;
+    }
+
+    double winRate() const {
+        int wins = 0, total = 0;
+        for (auto& t : tradeHistory)
+            if (!t.wasBuyer) { total++; if (t.pnl > 0) wins++; }
+        return total == 0 ? 0.0 : static_cast<double>(wins) / total;
+    }
+
 private:
-    double avgCostBasis = 0.0;
+    double avgCostBasis_ = 0.0;
 };

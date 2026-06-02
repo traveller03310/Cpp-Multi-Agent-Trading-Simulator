@@ -1,36 +1,56 @@
 #pragma once
 #include <deque>
-#include <string>
+#include "bot.hpp"
 #include "../src/order.hpp"
 #include "../src/orderbook.hpp"
 #include "../src/flat_orderbook.hpp"
-#include "bot.hpp"
+#include "../src/rdtsc.hpp"
+#include "regime_detector.hpp"
+
+// Only trades in TRENDING regime — avoids bleeding in choppy markets.
 
 class MomentumBot : public Bot {
-    std::deque<double> prices;
-    int window;
+    std::deque<double> prices_;
+    int window_;
+    RegimeDetector regime_;
 
 public:
-    MomentumBot(std::string name, int window = 5);
+    MomentumBot(std::string name, int window = 5)
+        : Bot(std::move(name)), window_(window) {}
 
-    void onPriceUpdate(double price, LimitOrderBook& lob, int timestep) override;
-    void onPriceUpdate(double price, FlatOrderBook&  lob, int timestep) override;
+    void onPriceUpdate(double price, LimitOrderBook& lob, int) override { place(price, lob); }
+    void onPriceUpdate(double price, FlatOrderBook&  lob, int) override { place(price, lob); }
 
 private:
-    double recentAvg()  const;
-    double earlierAvg() const;
-    bool shouldBuy()    const;
-    bool shouldSell()   const;
+    double halfAvg(bool recent) const {
+        int half = window_ / 2;
+        double sum = 0.0;
+        if (recent) {
+            auto it = prices_.end();
+            for (int i = 0; i < half; ++i) { --it; sum += *it; }
+        } else {
+            auto it = prices_.begin();
+            for (int i = 0; i < half; ++i, ++it) sum += *it;
+        }
+        return sum / half;
+    }
 
     template<typename Book>
-    void placeOrders(double price, Book& lob) {
-        prices.push_back(price);
-        if ((int)prices.size() > window) prices.pop_front();
-        if ((int)prices.size() < window) return;
+    void place(double price, Book& lob) {
+        regime_.update(price);
+        prices_.push_back(price);
+        if ((int)prices_.size() > window_) prices_.pop_front();
+        if ((int)prices_.size() < window_) return;
+        if (!regime_.isTrending() && regime_.currentRegime != Regime::UNDEFINED) return;
 
-        if (shouldBuy())
-            lob.addOrder(Order::makeLimitOrder(name, price - 1.0, 1, Side::BUY));
-        else if (shouldSell())
-            lob.addOrder(Order::makeLimitOrder(name, price + 1.0, 1, Side::SELL));
+        if (halfAvg(true) > halfAvg(false)) {
+            auto ord = Order::makeLimitOrder(name, price - 1.0, 1, Side::BUY);
+            ord.tsc_created = rdtsc();
+            lob.addOrder(ord);
+        } else if (halfAvg(true) < halfAvg(false)) {
+            auto ord = Order::makeLimitOrder(name, price + 1.0, 1, Side::SELL);
+            ord.tsc_created = rdtsc();
+            lob.addOrder(ord);
+        }
     }
 };
